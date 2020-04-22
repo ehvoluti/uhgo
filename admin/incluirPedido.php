@@ -76,7 +76,7 @@ $dados_cab = listar("pedido", "*", $where , "" , "idpedido DESC", "1");
 
 					<div>
 						<div class="btn-toolbar">
-							<button class="btn btn-success" style=" margin-left:50px; margin-top: 10px;" onclick="getIncluirItem();">Incluir Item</button>
+							<button class="btn btn-info" style=" margin-left:50px; margin-top: 10px;" onclick="getIncluirItem();">Incluir Item</button>
 						</div>
 					</div>	
 				</div>
@@ -100,7 +100,13 @@ $dados_cab = listar("pedido", "*", $where , "" , "idpedido DESC", "1");
 			</thead>
 			<tbody>
 			</tbody>
-		</table>		
+		</table>
+		<div>
+			<div class="btn-toolbar">
+				<button class="btn btn-success btn-lg"  onclick="fecharPedido();">Fechar Pedido</button>
+			</div>
+		</div>	
+	
 	</div>
 
 </div>	

@@ -70,7 +70,7 @@ function alterar($tabela, $onde, $dados) {
 	 */
 	$query = "UPDATE $tabela SET $set WHERE $onde";
 	
-	
+	echo $query;
 	/**
 	 * Preparamos e executamos nossa query
 	 */

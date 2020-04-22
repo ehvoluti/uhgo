@@ -7,9 +7,10 @@ if (!$_GET){
 	$where = " (EXTRACT(YEAR FROM dtneg))=(EXTRACT(YEAR FROM CURRENT_DATE)) AND EXTRACT(MONTH FROM dtneg)=EXTRACT(MONTH FROM CURRENT_DATE)".$filtro;	
 } else {
 	//$where = " (EXTRACT(YEAR FROM dtemissao))=(EXTRACT(YEAR FROM CURRENT_DATE)) AND EXTRACT(MONTH FROM dtemissao)=EXTRACT(MONTH FROM CURRENT_DATE)".$filtro;
-	$where = "idpedido>0" .$filtro;
+	$where = "idpedido>0 " .$filtro;
 
 }
+$where .=" AND idlogin = ".$_SESSION['idlogin'];
 $order = "idpedido DESC";
 $limit = "15";
 

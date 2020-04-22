@@ -1,4 +1,4 @@
-﻿DROP TABLE empresa 
+DROP TABLE empresa 
 CREATE TABLE empresa (
 idempresa INTEGER NOT NULL,
 nomeemp CHARACTER VARYING(50),
@@ -16,7 +16,7 @@ CONSTRAINT pk_cliente PRIMARY KEY (idcliente))
 DROP TABLE produto 
 CREATE TABLE produto (
 idproduto INTEGER NOT NULL,
-nomeprod CHARACTER VARYING(50),
+nomeprod CHARACTER VARYING(100),
 sku CHARACTER VARYING(15),
 CONSTRAINT pk_produto PRIMARY KEY (idproduto))
 
@@ -34,6 +34,7 @@ idempresa INTEGER,
 idcliente INTEGER,
 idlogin INTEGER,
 dtneg TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+status CHARACTER VARYING(1) DEFAULT 'D',
 totalped DECIMAL (12,2) DEFAULT 0.00,
 CONSTRAINT pk_pedido PRIMARY KEY (idpedido),
 CONSTRAINT fk_pedido_empresa FOREIGN KEY (idempresa)
@@ -57,7 +58,50 @@ CONSTRAINT fk_itpedido_produto FOREIGN KEY (idproduto)
 	REFERENCES produto (idproduto) MATCH SIMPLE ON UPDATE CASCADE ON DELETE NO ACTION
 )
 
+/* Criando tabela para controle de status (continuar...)
+CREATE TABLE controlestatus (
+status CHARACTER VARYING(1), 
+camponome CHARACTER VARYING(50), 
+tabelanome CHARACTER VARYING(50),
+descrstatus CHARACTER VARYING(50),
+)
+*/
 
+-- Function: stpr_incluiritem()
+
+-- DROP FUNCTION stpr_incluiritem();
+
+CREATE OR REPLACE FUNCTION stpr_incluiritem()
+  RETURNS trigger AS
+$BODY$
+	DECLARE var_seqitem INTEGER;
+	DECLARE var_total numeric(12,2);
+	DECLARE var_total_ped numeric(12,2);
+BEGIN
+	SELECT COALESCE(COUNT(seqitem),0) INTO var_seqitem FROM itpedido WHERE idpedido=new.idpedido;
+	IF var_seqitem=0 THEN
+		var_seqitem := 1;
+	ELSE 
+		var_seqitem := var_seqitem+1;
+	END IF;
+		new.seqitem := var_seqitem;
+	--Atualizando totais
+	var_total := new.quant * new.valor;
+	new.totalit := var_total;
+	SELECT COALESCE(SUM(totalit),0) INTO var_total_ped FROM itpedido WHERE idpedido=new.idpedido;
+	var_total_ped := var_total_ped + var_total;
+	UPDATE pedido SET totalped=var_total_ped WHERE idpedido=new.idpedido;
+
+	RETURN new;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION stpr_incluiritem()
+  OWNER TO postgres;
+
+
+--- Teste ---
 --Dados
 INSERT INTO usuario VALUES (1,'hugo', '123')
 INSERT INTO usuario VALUES (2,'helo', '123')

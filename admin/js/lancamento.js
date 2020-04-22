@@ -116,7 +116,7 @@ function getIncluirItem()
 							idproduto:v_idproduto,
 							quant:v_quant,
 							valor:v_valor}
-	console.log (ar_incluiritem);	
+	//console.log (ar_incluiritem);	
 
 
 
@@ -127,10 +127,10 @@ function getIncluirItem()
 		url: 'ajax/incluirItem.php',
 		data:{tabela:'itpedido',dados:ar_incluiritem},
 		success:function(retorno){
-			console.log(retorno)
+//			console.log(retorno)
 
 			let retorno2 = retorno.split(":")
-			console.log(retorno2[0])
+//			console.log(retorno2[0])
 			//console.log(ar_incluiritem[idpedido])
   
 			  var x = document.createElement("TR");
@@ -179,4 +179,21 @@ function getIncluirItem()
 	document.getElementById('quant').value = '';
 	document.getElementById('idproduto').value = '';
 	document.getElementById('idproduto').focus();
+}
+
+// Botao fecharPedido
+function fecharPedido() {
+	var v_idpedido = document.getElementById('idpedido').value;
+	var v_onde = `idpedido = `+ v_idpedido;
+	console.log(v_onde)
+		$.ajax({
+		type:'GET',
+		dataType: 'html',
+		url: 'ajax/fecharPedido.php',
+		data:{tabela:'pedido',dados:v_onde},
+			success:function(retorno){
+				//console.log(retorno)
+			}
+	})
+		
 }
