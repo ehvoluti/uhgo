@@ -86,12 +86,12 @@ $dados_cab = listar("pedido", "*", $where , "" , "idpedido DESC", "1");
 
 
 	<div class="form-group">
-		<table class="table table-sm table-responsive-sm table-responsive-md" id="listaItens">
+		<table  class="table table-sm table-responsive-sm table-responsive-md" id="listaItens">
 			<thead class="thead-dark">
 				<tr>
 					<th>Cod</th>
 					<th>Produto</th>
-					<th>Quant</th>
+					<th >Quant</th>
 					<th>Valor</th>
 					<th>Total</th>
 					<!--<th style="text-align: right">Valor</th> -->
@@ -111,7 +111,9 @@ $dados_cab = listar("pedido", "*", $where , "" , "idpedido DESC", "1");
 
 </div>	
 
-<!-- Modal Cabecalho -->
+<!-------------------- 
+	Modal Cabecalho 
+--------------------->
 <!--<form action="incluirPedido.php" method="get"> -->
 	<div id="cabModal" class="modal fade">
 		<div class="modal-dialog">
@@ -164,7 +166,6 @@ $dados_cab = listar("pedido", "*", $where , "" , "idpedido DESC", "1");
 				<div class="modal-footer">
 					<!--<input type="submit" value="Confirma" class="btn btn-primary" > -->
 					<button class="btn btn-primary" data-dismiss="modal" onclick="incluirPedido();">Confirma</button>
-					<button class="btn btn-info" data-dismiss="modal">Fechar</button>
 				</div>
 			</div>
 		</div>

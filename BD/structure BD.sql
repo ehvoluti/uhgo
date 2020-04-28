@@ -10,7 +10,10 @@ CREATE TABLE cliente (
 idcliente INTEGER NOT NULL,
 nomecli CHARACTER VARYING(50),
 cnpj CHARACTER VARYING(15),
-CONSTRAINT pk_cliente PRIMARY KEY (idcliente))
+CONSTRAINT pk_cliente PRIMARY KEY (idcliente));
+ALTER TABLE cliente ADD COLUMN idtabela integer;
+ALTER TABLE cliente ADD COLUMN idvendedor integer;
+
 
 
 DROP TABLE produto 
@@ -58,6 +61,29 @@ CONSTRAINT fk_itpedido_produto FOREIGN KEY (idproduto)
 	REFERENCES produto (idproduto) MATCH SIMPLE ON UPDATE CASCADE ON DELETE NO ACTION
 )
 
+CREATE TABLE tabela(
+idtabela INTEGER NOT NULL,
+descricaotab CHARACTER VARYING (100),
+idtabelaorig INTEGER NOT NULL,
+percentual DECIMAL (12,2),
+dataalt DATE,
+CONSTRAINT pk_tabela PRIMARY KEY (idtabela))
+
+CREATE TABLE ittabela(
+idtabela INTEGER,
+idproduto INTEGER,
+valor DECIMAL(12,2),
+CONSTRAINT fk_ittabela_tabela FOREIGN KEY (idtabela)
+	REFERENCES tabela (idtabela) MATCH SIMPLE ON UPDATE CASCADE ON DELETE NO ACTION
+)
+
+/*-------Select do Sankhya
+--Tabela
+SELECT 'INSERT INTO tabela VALUES ('||codtab||','''||nometab||''','||codtaborig||','||REPLACE(COALESCE(percentual,1),',','.')||','''||dtvigor||''');' FROM vgftab WHERE codtab>20 ORDER BY codtab
+--Itens
+SELECT 'INSERT INTO ittabela VALUES ('||vgftab.codtab||','||tgfexc.codprod||','||REPLACE(vlrvenda,',','.')||');' FROM vgftab  INNER JOIN tgfexc ON (vgftab.nutab = tgfexc.nutab) WHERE codtab>20 
+-----------------------*/
+
 /* Criando tabela para controle de status (continuar...)
 CREATE TABLE controlestatus (
 status CHARACTER VARYING(1), 
@@ -99,6 +125,28 @@ $BODY$
   COST 100;
 ALTER FUNCTION stpr_incluiritem()
   OWNER TO postgres;
+
+
+
+  -- Função para buscar Preço
+ -- DROP FUNCTION buscapreco(integer, integer);
+CREATE OR REPLACE FUNCTION buscapreco(
+    var_idcliente integer,
+    var_idproduto integer)
+  RETURNS numeric AS
+$BODY$
+DECLARE
+	var_preco DECIMAL(12, 4);
+BEGIN
+	var_preco := COALESCE((SELECT ROUND (valor*(100+cli.percentual)/100,2) FROM tabela AS orig LEFT JOIN  tabela AS cli ON (orig.idtabela = cli.idtabelaorig) INNER JOIN ittabela ON (orig.idtabela = ittabela.idtabela) WHERE ittabela.idproduto=var_idproduto AND cli.idtabela=(SELECT idtabela FROM cliente WHERE idcliente=var_idcliente)),0);
+	RETURN var_preco;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION buscapreco(integer, integer)
+  OWNER TO postgres;
+
 
 
 --- Teste ---

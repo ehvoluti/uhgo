@@ -1,0 +1,4 @@
+### Macro ###
+- Tratamento das tabelas de preços
+- Tratamento de usuário e vendedor
+- Tratamento estoque

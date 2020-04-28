@@ -48,6 +48,23 @@ function getProduto()
 {
 	var selector = document.getElementById('idproduto').value;
 	var passavalor = document.getElementById('dtlproduto').options.namedItem(selector).text;
+	var v_cliente = document.getElementById('idcliente').value;
+	var v_onde = v_cliente+`,`+selector;	
+
+    //Continuar buscar preço
+	$.ajax({
+		type:'GET',
+		dataType: 'html',
+		url: 'ajax/buscarPreco.php',
+		data:{dados:v_onde},
+		success:function(retorno){
+			//console.log(retorno)
+			document.getElementById('valor').value = retorno;
+
+		}	
+	})		
+
+	
 	//document.getElementById("produto").innerHTML = passavalor;
 	//document.getElementById("dtlproduto").innerHTML = passavalor;
 }
@@ -75,13 +92,6 @@ function incluirPedido()
 
 			let retorno2 = retorno.split(":")
 			console.log(retorno2[0])
-			//console.log(ar_incluiritem[idpedido])
-
-			//Monta table
-			  //var x = document.createElement("TR");
-			  //x.setAttribute("id", "cabecalho");
-			  //document.getElementById("cabPedido").appendChild(x);
-
 
   			  var y = document.createElement("TH");
 			  var t = document.createTextNode(`Pedido: `+retorno2[0]+ ` (`+retorno2[1]+`)`);
@@ -151,12 +161,14 @@ function getIncluirItem()
 
 			  //Quant item
 			  var y = document.createElement("TD");
+			  y.setAttribute("class", "d-none d-lg-block");
 			  var t = document.createTextNode(retorno2[2]);
 			  y.appendChild(t);
 			  document.getElementById(retorno2[5]).appendChild(y);
 
 			  //valor item
 			  var y = document.createElement("TD");
+			  y.setAttribute("class", "d-none d-lg-block");
 			  var t = document.createTextNode(retorno2[3]);
 			  y.appendChild(t);
 			  document.getElementById(retorno2[5]).appendChild(y);
@@ -166,15 +178,9 @@ function getIncluirItem()
 			  y.appendChild(t);
 			  document.getElementById(retorno2[5]).appendChild(y);
 
-
-			  
-			  //document.getElementById("dtlproduto").innerHTML = ``;
   		}
 	})
-	//Limpa campos para nova digitação
-	//document.getElementById(idproduto).innerHTML=``;
-	//document.getElementById(quant).value='0';
-	//document.getElementById("dtlproduto").innerHTML = ``;
+	//Limpa campos para digitação de novos pedidos
 	document.getElementById('valor').value = '';
 	document.getElementById('quant').value = '';
 	document.getElementById('idproduto').value = '';
@@ -192,7 +198,9 @@ function fecharPedido() {
 		url: 'ajax/fecharPedido.php',
 		data:{tabela:'pedido',dados:v_onde},
 			success:function(retorno){
-				//console.log(retorno)
+				console.log(retorno)
+				//Falta colocar IF aqui verificando se o Pedido foi realmente digitado
+				window.location.href = "pedido.php";
 			}
 	})
 		
